@@ -1,0 +1,18 @@
+# Cadence lock files
+*.cdslck*
+*~
+
+# Cadence logs
+*.log*
+CDS.log*
+libManager.log*
+pvs.*
+assura.*
+
+# macOS system files
+.DS_Store
+
+# Simulation runs
+simulation/
+*.psf/
+*.raw/
