@@ -1,6 +1,6 @@
 # Full-Custom Mixed-Signal NE555 Timer IC in 90nm CMOS
 
-![Technology](https://img.shields.io/badge/Technology-GPDK%2090nm%201.2V-007ACC?style=flat-square)
+[![Technology](https://img.shields.io/...)](https://www.cadence.com)
 ![EDA](https://img.shields.io/badge/EDA-Cadence%20Virtuoso%20%7C%20Spectre%20%7C%20Assura-E05C2B?style=flat-square)
 ![Physical Verification](https://img.shields.io/badge/Verification-Assura%20DRC%20%2F%20LVS%20Clean-success?style=flat-square)
 ![Sign-off](https://img.shields.io/badge/Sign--off-Post--Layout%20RCX%20(av__extracted)-purple?style=flat-square)
