@@ -1,11 +1,5 @@
 # Full-Custom Mixed-Signal NE555 Timer IC in 90nm CMOS
 
-[![Technology](https://img.shields.io/...)](https://www.cadence.com)
-![EDA](https://img.shields.io/badge/EDA-Cadence%20Virtuoso%20%7C%20Spectre%20%7C%20Assura-E05C2B?style=flat-square)
-![Physical Verification](https://img.shields.io/badge/Verification-Assura%20DRC%20%2F%20LVS%20Clean-success?style=flat-square)
-![Sign-off](https://img.shields.io/badge/Sign--off-Post--Layout%20RCX%20(av__extracted)-purple?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
-
 Full-custom transistor-level design, physical layout, parasitic extraction (PEX), and post-layout sign-off simulation of an NE555 Mixed-Signal Timer IC. Designed and verified in **Cadence Virtuoso** using the **GPDK 90nm CMOS** technology library operating at a nominal supply of $V_{DD} = 1.2\text{ V}$.
 
 <p align="center">
