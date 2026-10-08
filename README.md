@@ -1,52 +1,70 @@
-# Full-Custom NE555 Timer IC Design & Post-Layout Sign-Off (90nm CMOS)
+# Full-Custom Mixed-Signal NE555 Timer IC in 90nm CMOS
 
-A full-custom integrated circuit design of the classic NE555 Timer, implemented using **Cadence Virtuoso** on a **90nm CMOS process (GPDK090)** operating at $V_{DD} = 1.2\text{ V}$.
+![Technology](https://img.shields.io/badge/Technology-GPDK%2090nm%201.2V-007ACC?style=flat-square)
+![EDA](https://img.shields.io/badge/EDA-Cadence%20Virtuoso%20%7C%20Spectre%20%7C%20Assura-E05C2B?style=flat-square)
+![Physical Verification](https://img.shields.io/badge/Verification-Assura%20DRC%20%2F%20LVS%20Clean-success?style=flat-square)
+![Sign-off](https://img.shields.io/badge/Sign--off-Post--Layout%20RCX%20(av__extracted)-purple?style=flat-square)
+![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)
 
-The design covers the complete analog flow: transistor-level schematic capture, custom physical layout, physical verification (DRC/LVS), parasitic extraction (Assura RCX), and sign-off post-layout simulation.
+Full-custom transistor-level design, physical layout, parasitic extraction (PEX), and post-layout sign-off simulation of an NE555 Mixed-Signal Timer IC. Designed and verified in **Cadence Virtuoso** using the **GPDK 90nm CMOS** technology library operating at a nominal supply of $V_{DD} = 1.2\text{ V}$.
 
----
-
-## Architecture & Sub-blocks
-The circuit consists of four custom sub-blocks:
-1. **Resistive Voltage Divider:** Precision reference ladder generating the switching thresholds ($V_{TH} = \frac{2}{3}V_{DD} = 0.8\text{ V}$ and $V_{TRIG} = \frac{1}{3}V_{DD} = 0.4\text{ V}$).
-2. **Dual Analog Comparators:** Differential pair architectures detecting threshold trigger conditions.
-3. **SR Latch:** High-speed bistable multivibrator driving the internal switching state.
-4. **Discharge & Output Stage:** Sized NMOS switch handling rapid timing capacitor discharge alongside output buffering.
-
----
-
-## Design & Verification Flow
-* **Schematic Capture:** Virtuoso Schematic Editor
-* **Simulation & Analysis:** Spectre Simulation Engine (ADE L)
-* **Physical Layout:** Virtuoso Layout Suite (DRC Clean & LVS Clean)
-* **Parasitic Extraction (PEX):** Assura RCX producing parasitic-annotated `av_extracted` views
-* **Sign-Off Verification:** Hierarchy Editor (`config` view) linking extracted views for pre vs. post-layout transient validation
+<p align="center">
+  <img src="docs/layout_555.png" alt="Full-Custom Physical Layout" width="48%">
+  <img src="docs/astable_sim.png" alt="Post-Layout Astable Simulation" width="48%">
+</p>
 
 ---
 
-## Simulation Results
+## Key Hardware & Physical Highlights (Sign-off)
 
-### 1. Monostable Multivibrator
-Triggered pulse generator producing a calibrated output pulse upon active-low trigger pulse:
-- Output switches high immediately when trigger falls below $0.4\text{ V}$ ($\frac{1}{3}V_{DD}$).
-- Timing capacitor charges exponentially to $0.8\text{ V}$ ($\frac{2}{3}V_{DD}$) before being discharged back to ground.
-
-### 2. Astable Multivibrator (Free-Running Oscillator)
-Continuous square-wave relaxation oscillator operating between hysteresis thresholds ($\frac{1}{3}V_{DD}$ and $\frac{2}{3}V_{DD}$):
-- Stable output toggling with negligible post-layout parasitic drift.
-- Rail-to-rail square wave output transitions validated under post-layout extraction.
+* **Closed-Loop Physical Sign-Off:** Full design flow completed from transistor sizing, full-custom layout, **Assura DRC Clean**, and **Assura LVS Clean** with zero layout-versus-schematic mismatches.
+* **Parasitic-Aware Validation:** Parasitic extraction completed via **Assura RCX** producing parasitic-annotated `av_extracted` views; simulations performed under **Spectre** via Cadence Hierarchy Editor (`config` view).
+* **Calibrated Switching Thresholds:** Integrated high-matching 3-stage precision resistive voltage divider providing switching hysteresis boundaries at $\frac{1}{3}V_{DD} = 0.4\text{ V}$ (Trigger) and $\frac{2}{3}V_{DD} = 0.8\text{ V}$ (Threshold).
+* **Dual Operational Modes:** Sign-off transient verification confirms robust rail-to-rail operation in both continuous **Astable** (relaxation oscillator) and edge-triggered **Monostable** modes under post-layout conditions.
 
 ---
 
-## Project Structure
+## Architectural Sub-Blocks
+
+<p align="center">
+  <img src="docs/schematic_top.png" alt="Transistor-Level Top Schematic" width="85%">
+</p>
+
+The core timer architecture consists of four full-custom functional blocks sized for low-voltage operation ($1.2\text{ V}$):
+
+1. **Precision Voltage Divider (`voltage_divider`):**
+   * Three matched integrated resistors generating stable internal reference voltages ($0.4\text{ V}$ and $0.8\text{ V}$).
+   * Symmetric physical layout floorplanned to minimize mismatch and process gradient effects.
+2. **Dual Analog Differential Comparators (`comparator`):**
+   * High-gain differential pairs comparing external inputs against internal divider reference nodes.
+   * Tail current sources sized for fast slew rate and switching transitions.
+3. **Bistable SR Latch (`RS`):**
+   * High-speed CMOS cross-coupled NAND/NOR bistable latch storing output trigger states.
+   * Sized with minimum internal delay to avoid metastability during threshold crossing.
+4. **Discharge & Output Buffer Stage:**
+   * Sized NMOS open-drain discharge transistor providing rapid discharge of external timing capacitors to ground.
+   * High-drive output inverter buffer isolating internal latch states from external load impedances.
+
+---
+
+## Physical Verification & Extraction Flow
+
 ```text
+[ Schematic Capture ] ──> [ Virtuoso Layout Suite ] ──> [ Assura DRC ] (Clean)
+                                                               │
+[ Post-Layout Sim ] <── [ Hierarchy Editor (HED) ] <── [ Assura LVS & RCX ]
+  (Spectre ADE L)           (av_extracted view)           (Parasitic Netlist)
 .
-├── cds.lib                 # Cadence library definition
-├── Timer_555/              # Virtuoso library containing cell views
-│   ├── comparator/         # Schematic, Symbol, Layout & Extracted views
-│   ├── RS/                 # SR Latch implementation
-│   ├── voltage_divider/    # Reference ladder & extracted views
-│   ├── Tb_555_astable/     # Astable testbench (schematic & config)
-│   └── Tb_555_monostable/  # Monostable testbench (schematic & config)
-└── docs/                   # Waveforms and layout screenshots
-
+├── cds.lib                 # Cadence library path definition
+├── .gitignore              # Ignores locks (*.cdslck), simulation runs & temp logs
+├── docs/                   # Waveforms, verification logs & layout screenshots
+│   ├── layout_555.png
+│   ├── astable_sim.png
+│   ├── monostable_sim.png
+│   └── schematic_top.png
+└── Timer_555/              # Cadence Virtuoso Library
+    ├── comparator/         # Differential comparator (sch, sym, layout, av_extracted)
+    ├── RS/                 # Bistable latch cell
+    ├── voltage_divider/    # Matched reference ladder & extracted views
+    ├── Tb_555_astable/     # Astable sign-off testbench (schematic & config)
+    └── Tb_555_monostable/  # Monostable testbench (schematic & config)
